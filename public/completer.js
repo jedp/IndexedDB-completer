@@ -6,9 +6,24 @@ function Completer(onready) {
 }
 
 Completer.prototype = {
+
+  /**
+   * Open the database.  When done, invoke callback with error,
+   * if any.
+   */
   open: function Completer_open(callback) {
+    callback = callback || function() {};
     var req = indexedDB.open(COLLECTION_NAME);
 
+    /**
+     * onupgradeneeded will be invoked on first creation and 
+     * subsequent version increments for the db.  This is the 
+     * only way that the database schema can be set or adjusted.
+     * So if something goes wrong and you start getting errors
+     * about the database or object store not being found,
+     * just destroy the db and try again:
+     * indexedDB.destroyDatabase('test-completer');
+     */
     req.onupgradeneeded = function(event) {
       var db = event.target.result;
       db.createObjectStore("terms", {keyPath: "term"});
@@ -25,10 +40,16 @@ Completer.prototype = {
     }.bind(this);
   },
 
+  /**
+   * Close the database
+   */
   close: function Completer_close(callback) {
     this._db.close(callback);
   },
 
+  /**
+   * Asynchronously add a word to the database
+   */
   add: function Completer_add(word) {
     if (this._db === null) return;
 
@@ -46,6 +67,10 @@ Completer.prototype = {
     store.put({term: word + "*"});
   },
 
+  /**
+   * Asynchronously query the database.  Callback with a list of words 
+   * begin with the query.
+   */
   find: function Completer_find(query, callback) {
     if (this._db === null) return;
 
@@ -67,6 +92,7 @@ Completer.prototype = {
           (term.slice(0, query.length) !== query)) {
         return callback(results);
       }
+
       if (term[term.length-1] === "*") {
         results.push(term.slice(0, term.length-1));
       }

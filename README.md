@@ -19,6 +19,20 @@ To run the example node.js server,
 
 Then visit http://127.0.0.1:3000/ in your browser.
 
+# Why
+
+My purpose for putting this together is to make a prototype of this:
+
+[Crystal Beasley's idea for contacts and Persona](http://www.youtube.com/watch?v=2i-eMl33tew)
+
+My intention is to bring this code together with 
+[this FirefoxOS contacts change listener](https://github.com/jedp/myfx-contacts), 
+and try to find the right way forward with Persona and 
+[Identity-attached services](https://wiki.mozilla.org/Identity/AttachedServices) 
+in a FirefoxOS app.
+
+
+
 
 
 
