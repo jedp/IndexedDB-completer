@@ -1,0 +1,73 @@
+<DOCTYPE html>
+<html>
+    <head>
+        <title>IndexedDB autocomplete test</title>
+        <meta charset='utf-8' />
+        <script src='completer.js'></script>
+    </head>
+    <body>
+
+      <p>Auto-completion example using indexedDB. 
+         [<a href="https://github.com/jedp/IndexedDB-completer">github</a>]</p>
+
+      <ol>
+        <li>Start typing words in the input field; suggested completions will appear.</li>
+        <li>Hit return to save the words in the databse</li>
+        <li>Goto 1</li>
+      </ol>
+
+      <div id='queries'>
+        <input type='text' id='input'/>
+      </div>
+
+      <div>
+        <ul id='suggestions'>
+      </div>
+
+      <script>
+        var completer = new Completer();
+        completer.open(function(err) {
+          if (err) {
+            return console.error(err);
+          }
+
+          var input = document.getElementById('input');
+          var suggestions = document.getElementById('suggestions');
+
+          function clearSuggestions() {
+            var children = suggestions.childNodes;
+            for (var i = children.length-1; i >= 0; --i) {
+              suggestions.removeChild(children[i]);
+            }
+          }
+
+          input.addEventListener('keyup', function(evt) {
+            var words = input.value.trim().split(/\s/);
+
+            // After user hits enter, add words in text field
+            if (evt.keyCode === 13) {
+              words.forEach(function(word) { completer.add(word) });
+              input.value = "";
+              clearSuggestions();
+            }
+
+            // Otherwise make or revise the list of suggestions
+            else {
+              clearSuggestions();
+              if (words && words[0]) {
+                completer.find(words[0], function(found) {
+                  found.forEach(function(word) {
+                    var li = document.createElement('li');
+                    li.textContent = word;
+                    suggestions.appendChild(li);
+                  });
+                });
+              }
+            }
+          });
+
+        });
+      </script>
+    </body>
+</html>
+
